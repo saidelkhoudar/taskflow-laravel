@@ -1,15 +1,16 @@
 # TaskFlow
 
-A polished task management dashboard built with **Laravel 13**, Blade and MySQL. It demonstrates server-side validation, safe CSRF-protected CRUD actions, search/filtering, pagination and responsive UI without claiming prior production experience.
+A task management dashboard built with **Laravel 13**, Blade and MySQL. Each account can only see and modify its own tasks.
 
 ## Features
 
-- Create, complete/reopen and delete tasks
+- Account registration, login and logout with Laravel's built-in session guard
+- Owner-scoped task CRUD with IDOR protection
 - Priority, status, due date and notes
 - Search by title or description and filter by status
 - Request validation with friendly error feedback
 - CSRF protection, mass-assignment allow-listing and escaped Blade output
-- MySQL-ready configuration; SQLite is convenient for local tests
+- MySQL-ready configuration; SQLite is used by the automated test suite
 
 ## Quick start
 
@@ -22,7 +23,7 @@ php artisan migrate
 php artisan serve
 ```
 
-Open `http://localhost:8000`. For a quick local smoke test without MySQL, set `DB_CONNECTION=sqlite` and `DB_DATABASE=database/database.sqlite`, create the file, then run migrations.
+Open `http://localhost:8000`, create an account, then manage private tasks.
 
 ## Tests
 
@@ -32,4 +33,4 @@ php artisan test
 
 ## Security notes
 
-This demo intentionally avoids hard-coded secrets, uses Laravel's CSRF middleware, validates every write, limits input lengths, escapes output in Blade, and uses Eloquent's fillable allow-list. Add authentication/authorization before exposing multi-user data.
+Authentication uses Laravel's built-in session guard. Every task query is scoped to the authenticated user, direct access to another user's task returns 404, and normal web CSRF middleware remains enabled. Password reset and email verification are not included yet.
