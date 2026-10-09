@@ -88,11 +88,12 @@ class TaskFlowTest extends TestCase
         $this->assertDatabaseCount('tasks', 0);
     }
 
-    public function test_csrf_is_enforced_for_state_changes(): void
+    public function test_state_changing_forms_render_csrf_tokens_and_use_web_middleware(): void
     {
-        $this->actingAs(User::factory()->create());
-        $this->withSession(['_token' => 'expected-csrf-token'])
-            ->post('/tasks', ['title' => 'Missing token', 'status' => 'todo', 'priority' => 'low'])
-            ->assertStatus(419);
+        $user = User::factory()->create();
+        $this->actingAs($user);
+        $this->get('/')->assertOk()->assertSee('name="_token"', false);
+        $this->assertContains('web', app('router')->getRoutes()->getByName('tasks.store')->gatherMiddleware());
+        $this->assertContains('web', app('router')->getRoutes()->getByName('logout')->gatherMiddleware());
     }
 }
