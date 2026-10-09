@@ -91,7 +91,8 @@ class TaskFlowTest extends TestCase
     public function test_csrf_is_enforced_for_state_changes(): void
     {
         $this->actingAs(User::factory()->create());
-        $this->post('/tasks', ['title' => 'Missing token', 'status' => 'todo', 'priority' => 'low'])
+        $this->withSession(['_token' => 'expected-csrf-token'])
+            ->post('/tasks', ['title' => 'Missing token', 'status' => 'todo', 'priority' => 'low'])
             ->assertStatus(419);
     }
 }
